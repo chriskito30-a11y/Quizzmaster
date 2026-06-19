@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Créer un quiz — QuizMaster</title>
+  <meta name="theme-color" content="#111827"><link rel="manifest" href="manifest.json"><link rel="icon" href="assets/img/icon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;650;700;800;900&display=swap" rel="stylesheet"><link rel="stylesheet" href="assets/css/quiz.css">
+</head>
+<body class="app-bg">
+  <main class="page-shell">
+    <header class="topbar">
+      <div><p class="eyebrow">QuizMaster</p><h1>Créer / configurer</h1><p class="lead">Créez une salle, ajoutez vos questions, puis ouvrez l’interface admin et l’écran public.</p></div>
+      <div class="topbar-actions"><a class="ghost-link" href="index.html">Accueil</a><a class="ghost-link" id="adminLink" href="#">Admin</a></div>
+    </header>
+
+    <section class="layout">
+      <div class="panel-card">
+        <h2>1. Salle de quiz</h2>
+        <form id="roomForm" class="form-grid">
+          <div class="two-cols">
+            <label><span>Titre du quiz</span><input id="quizTitle" value="Quiz interactif" maxlength="90"></label>
+            <label><span>Code session</span><input id="roomId" placeholder="auto ou ex : soiree-quiz"></label>
+          </div>
+          <div class="two-cols">
+            <label><span>Mot de passe organisateur</span><input id="password" type="password" placeholder="4 caractères minimum"></label>
+            <label><span>Durée par défaut</span><input id="defaultDuration" type="number" min="5" max="180" value="25"></label>
+          </div>
+          <div class="actions-row"><button class="primary-btn" type="submit">Créer / ouvrir la salle</button><button class="ghost-btn" type="button" id="loadDemoBtn">Charger questions démo</button></div>
+          <p id="roomStatus" class="status-text"></p>
+        </form>
+      </div>
+
+      <aside class="side-stack">
+        <div class="panel-card"><h2>Liens de partage</h2><div class="share-grid" id="shareGrid"></div></div>
+        <div class="panel-card"><h2>Limite V1</h2><p class="muted">Prototype simple : règles Firebase ouvertes pour test, mot de passe côté interface, pas encore de comptes clients ni quotas serveur.</p></div>
+      </aside>
+    </section>
+
+    <section class="panel-card" style="margin-top:18px">
+      <div class="question-head"><div><h2>2. Questions</h2><p class="muted">QCM, vrai/faux et texte court. Le texte court est volontairement strict en V1.</p></div><button class="secondary-btn" id="addQuestionBtn" type="button">Ajouter une question</button></div>
+      <div id="questionsList" class="form-grid"></div>
+      <div class="actions-row" style="margin-top:18px"><button class="primary-btn" id="saveQuestionsBtn" type="button">Enregistrer les questions</button><a class="ghost-link" id="goAdminBtn" href="#">Aller au pilotage</a></div>
+      <p id="questionsStatus" class="status-text"></p>
+    </section>
+  </main>
+  <script type="module" src="assets/js/setup.js"></script><script src="assets/js/pwa.js"></script>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>QuizMaster — Quiz interactif live Modulys</title>
+  <meta name="description" content="QuizMaster est un module Modulys pour créer des quiz interactifs avec participants mobiles, QR code, écran public, timer et classement.">
+  <meta name="theme-color" content="#111827">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="assets/img/icon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;650;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/quiz.css">
+</head>
+<body class="app-bg">
+  <main class="page-shell index-shell">
+    <section class="hero-card glow-card">
+      <p class="eyebrow">Module Modulys · Quiz interactif</p>
+      <h1>QuizMaster</h1>
+      <p class="lead">Créez un quiz live en quelques minutes : les participants répondent depuis leur téléphone, l’organisateur pilote la session et l’écran public affiche le timer, les réponses et le classement.</p>
+      <div class="actions-row">
+        <a class="primary-link big-btn" href="setup.html">Créer un quiz</a>
+        <a class="ghost-link big-btn" href="player.html">Rejoindre une session</a>
+        <a class="ghost-link big-btn" href="screen.html">Écran public</a>
+      </div>
+      <p class="status-text" id="firebaseStatus"></p>
+    </section>
+
+    <section class="feature-grid" aria-label="Fonctionnalités principales">
+      <article class="mini-card"><strong>QR code</strong><span>Un lien participant et un lien écran public sont générés automatiquement.</span></article>
+      <article class="mini-card"><strong>Pilotage live</strong><span>L’organisateur lance les questions, révèle les réponses et suit les participants.</span></article>
+      <article class="mini-card"><strong>Classement</strong><span>Les scores sont calculés automatiquement à partir des bonnes réponses.</span></article>
+    </section>
+
+    <footer>© 2026 — Modulys · Module QuizMaster</footer>
+  </main>
+  <script type="module" src="assets/js/index.js"></script>
+  <script src="assets/js/pwa.js"></script>
+</body>
+</html>

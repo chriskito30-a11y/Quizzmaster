@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Pilotage — QuizMaster</title>
+  <meta name="theme-color" content="#111827"><link rel="manifest" href="manifest.json"><link rel="icon" href="assets/img/icon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;650;700;800;900&display=swap" rel="stylesheet"><link rel="stylesheet" href="assets/css/quiz.css">
+</head>
+<body class="app-bg">
+  <main class="page-shell">
+    <section class="auth-card panel-card" id="authCard">
+      <p class="eyebrow">Accès organisateur</p><h1>Admin</h1><p class="muted">Code session : <strong id="authRoomName">—</strong></p>
+      <form id="authForm" class="form-grid"><label><span>Mot de passe organisateur</span><input id="authPassword" type="password" autocomplete="current-password"></label><button class="primary-btn" type="submit">Entrer</button><p id="authStatus" class="status-text"></p></form>
+    </section>
+
+    <section id="adminApp" class="hidden">
+      <header class="topbar"><div><p class="eyebrow">QuizMaster · Pilotage</p><h1 id="quizTitle">Quiz</h1><p class="lead" id="stateLabel">Session en attente.</p></div><div class="topbar-actions"><a class="ghost-link" id="setupLink" href="#">Configuration</a><a class="ghost-link" id="screenLink" href="#">Écran</a><a class="ghost-link" id="playerLink" href="#">Joueurs</a></div></header>
+      <section class="admin-layout">
+        <div class="side-stack">
+          <article class="panel-card">
+            <div class="question-head"><div><h2>Question en cours</h2><p class="muted" id="questionCounter">—</p></div><div class="timer-orb" id="timer">—</div></div>
+            <h3 id="currentQuestionText">Aucune question lancée.</h3><div id="currentChoices" class="choices-grid"></div>
+            <div class="actions-row" style="margin-top:18px"><button class="primary-btn" id="startBtn">Lancer</button><button class="secondary-btn" id="showAnswersBtn">Afficher réponses</button><button class="secondary-btn" id="revealBtn">Révéler</button><button class="ghost-btn" id="nextBtn">Question suivante</button><button class="danger-btn" id="finishBtn">Terminer</button></div>
+          </article>
+          <article class="panel-card"><h2>Réponses reçues</h2><div id="answersList" class="answers-list"></div></article>
+        </div>
+        <aside class="side-stack">
+          <article class="panel-card"><h2>Statistiques</h2><div class="kpi-grid"><div class="kpi"><strong id="playersCount">0</strong><span>joueurs</span></div><div class="kpi"><strong id="answersCount">0</strong><span>réponses</span></div><div class="kpi"><strong id="questionIndex">0</strong><span>question</span></div></div></article>
+          <article class="panel-card"><h2>Classement</h2><div id="scoreboard" class="scoreboard-list"></div></article>
+        </aside>
+      </section>
+    </section>
+  </main>
+  <script type="module" src="assets/js/admin.js"></script><script src="assets/js/pwa.js"></script>
+</body>
+</html>
