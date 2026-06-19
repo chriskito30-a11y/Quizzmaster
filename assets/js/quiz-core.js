@@ -112,21 +112,52 @@ export function getDeviceId() {
   const key = "quizMasterDeviceId";
   let id = localStorage.getItem(key);
   if (!id) {
-    id = crypto.randomUUID ? crypto.randomUUID() : `device-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    const cryptoApi = globalThis.crypto || globalThis.msCrypto;
+    id = cryptoApi?.randomUUID
+      ? cryptoApi.randomUUID()
+      : `device-${Date.now()}-${Math.random().toString(36).slice(2)}`;
     localStorage.setItem(key, id);
   }
   return id.replace(/[^a-zA-Z0-9_-]/g, "");
 }
 
 export async function sha256(text) {
-  const bytes = new TextEncoder().encode(text);
-  const digest = await crypto.subtle.digest("SHA-256", bytes);
-  return Array.from(new Uint8Array(digest)).map((b) => b.toString(16).padStart(2, "0")).join("");
+  const value = String(text || "");
+  const cryptoApi = globalThis.crypto || globalThis.msCrypto;
+
+  // Méthode moderne : disponible en HTTPS ou localhost.
+  if (cryptoApi?.subtle?.digest && globalThis.TextEncoder) {
+    const bytes = new TextEncoder().encode(value);
+    const digest = await cryptoApi.subtle.digest("SHA-256", bytes);
+    return Array.from(new Uint8Array(digest))
+      .map((b) => b.toString(16).padStart(2, "0"))
+      .join("");
+  }
+
+  // Fallback prototype : évite le crash si crypto.subtle est indisponible.
+  // Suffisant pour tester en local ou sur un hébergement non sécurisé,
+  // mais à remplacer par une vraie sécurité serveur avant commercialisation.
+  let h1 = 0xdeadbeef;
+  let h2 = 0x41c6ce57;
+  for (let i = 0; i < value.length; i += 1) {
+    const ch = value.charCodeAt(i);
+    h1 = Math.imul(h1 ^ ch, 2654435761);
+    h2 = Math.imul(h2 ^ ch, 1597334677);
+  }
+  h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+  h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+  const hex = `${(h2 >>> 0).toString(16).padStart(8, "0")}${(h1 >>> 0).toString(16).padStart(8, "0")}`;
+  return hex.repeat(4).slice(0, 64);
 }
 
 export function makeSalt() {
   const arr = new Uint8Array(16);
-  crypto.getRandomValues(arr);
+  const cryptoApi = globalThis.crypto || globalThis.msCrypto;
+  if (cryptoApi?.getRandomValues) {
+    cryptoApi.getRandomValues(arr);
+  } else {
+    for (let i = 0; i < arr.length; i += 1) arr[i] = Math.floor(Math.random() * 256);
+  }
   return Array.from(arr).map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
