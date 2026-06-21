@@ -1,8 +1,10 @@
+import { enforceModuleAccess } from "./modulys-access.js";
 import { $, DEFAULT_QUESTIONS, ensureRoom, getRoom, patchRoom, publicUrl, qrCodeUrl, randomRoomId, sanitizeQuestion, safeQuestions, setStatus, rememberPassword, cleanText, clampNumber } from "./quiz-core.js";
 
 let roomId = new URLSearchParams(location.search).get("room") || "";
 let questions = structuredClone(DEFAULT_QUESTIONS);
 let password = "";
+const moduleAccessReady = enforceModuleAccess("quizmaster", { mode: "soft" });
 
 const roomInput = $("#roomId");
 roomInput.value = roomId || randomRoomId();
@@ -61,6 +63,8 @@ $("#roomForm").addEventListener("submit", async (event) => {
   event.preventDefault();
   try {
     password = $("#password").value;
+    const hasAccess = await moduleAccessReady;
+    if (!hasAccess) throw new Error("Accès Modulys indisponible pour ce module.");
     const result = await ensureRoom(roomInput.value, password, $("#quizTitle").value);
     roomId = result.roomId;
     roomInput.value = roomId;
