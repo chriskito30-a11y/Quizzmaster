@@ -1,4 +1,4 @@
-import { enforceModuleAccess, assertCanCreateModuleEvent, buildModuleEntityMeta, recordModuleEventUsage } from "./modulys-access.js";
+import { enforceModuleAccess, assertCanCreateModuleEvent, buildModuleEntityMeta, recordModuleEventUsage, isFreeLimitError, renderFreeLimitUpgrade } from "./modulys-access.js";
 import { $, DEFAULT_QUESTIONS, ensureRoom, getRoom, patchRoom, publicUrl, qrCodeUrl, randomRoomId, sanitizeQuestion, safeQuestions, setStatus, rememberPassword, cleanText, clampNumber } from "./quiz-core.js";
 const __modulysAccessOk = await enforceModuleAccess("quizmaster", { mode: "hard" });
 if (!__modulysAccessOk) throw new Error("Modulys access denied");
@@ -89,7 +89,10 @@ $("#roomForm").addEventListener("submit", async (event) => {
     renderQuestions(); updateLinks();
     history.replaceState(null, "", `setup.html?room=${roomId}`);
     setStatus("#roomStatus", result.created ? "Salle créée." : "Salle existante ouverte.", "success");
-  } catch (err) { setStatus("#roomStatus", err.message || "Erreur de création.", "error"); }
+  } catch (err) {
+    if (isFreeLimitError(err) && renderFreeLimitUpgrade("#roomStatus", "quizmaster", err)) return;
+    setStatus("#roomStatus", err.message || "Erreur de création.", "error");
+  }
 });
 
 $("#addQuestionBtn").addEventListener("click", () => { questions = readQuestionsFromDom(); questions.push({ id: crypto.randomUUID?.() || String(Date.now()), type: "qcm", text: "Nouvelle question", durationSec: 25, choices: ["Réponse A", "Réponse B", "Réponse C", "Réponse D"], correct: 0, points: 100 }); renderQuestions(); });
