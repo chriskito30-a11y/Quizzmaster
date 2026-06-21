@@ -1,4 +1,4 @@
-import { enforceModuleAccess } from "./modulys-access.js";
+import { enforceModuleAccess, assertCanCreateModuleEvent, buildModuleEntityMeta, recordModuleEventUsage } from "./modulys-access.js";
 import { $, DEFAULT_QUESTIONS, ensureRoom, getRoom, patchRoom, publicUrl, qrCodeUrl, randomRoomId, sanitizeQuestion, safeQuestions, setStatus, rememberPassword, cleanText, clampNumber } from "./quiz-core.js";
 const __modulysAccessOk = await enforceModuleAccess("quizmaster", { mode: "hard" });
 if (!__modulysAccessOk) throw new Error("Modulys access denied");
@@ -68,7 +68,14 @@ $("#roomForm").addEventListener("submit", async (event) => {
     password = $("#password").value;
     const hasAccess = await moduleAccessReady;
     if (!hasAccess) throw new Error("Accès Modulys indisponible pour ce module.");
-    const result = await ensureRoom(roomInput.value, password, $("#quizTitle").value);
+    let usageContext = null;
+    const result = await ensureRoom(roomInput.value, password, $("#quizTitle").value, {
+      getCreateMeta: async () => {
+        usageContext = await assertCanCreateModuleEvent("quizmaster");
+        return buildModuleEntityMeta(usageContext);
+      }
+    });
+    if (result.created) await recordModuleEventUsage("quizmaster", result.roomId, usageContext);
     roomId = result.roomId;
     roomInput.value = roomId;
     rememberPassword(roomId, password);

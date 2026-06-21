@@ -235,7 +235,7 @@ export async function patchRoom(roomId, patch = {}) {
   writeLocalRoom(clean, next);
 }
 
-export async function ensureRoom(roomId, password, title = "Quiz interactif") {
+export async function ensureRoom(roomId, password, title = "Quiz interactif", options = {}) {
   const clean = normalizeRoomId(roomId || randomRoomId());
   if (!clean) throw new Error("Code session invalide.");
   if (!password || password.length < 4) throw new Error("Choisis un mot de passe organisateur d’au moins 4 caractères.");
@@ -246,8 +246,15 @@ export async function ensureRoom(roomId, password, title = "Quiz interactif") {
   const salt = makeSalt();
   const passwordHash = await hashPassword(clean, password, salt);
   const t = now();
+  const moduleMeta = typeof options.getCreateMeta === "function" ? await options.getCreateMeta(clean) : {};
   const room = structuredClone(DEFAULT_ROOM);
+  Object.assign(room, moduleMeta);
   room.meta.title = cleanText(title, 90) || DEFAULT_ROOM.meta.title;
+  room.meta.ownerUid = moduleMeta.ownerUid || "";
+  room.meta.moduleId = moduleMeta.moduleId || "quizmaster";
+  room.meta.planId = moduleMeta.planId || "free";
+  room.meta.billingPeriod = moduleMeta.billingPeriod || "";
+  room.meta.participantsLimit = Number(moduleMeta?.limits?.participantsPerEvent ?? 30);
   room.meta.createdAt = t;
   room.meta.updatedAt = t;
   room.private = { salt, passwordHash, createdAt: t };

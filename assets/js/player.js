@@ -17,7 +17,13 @@ $("#joinForm").addEventListener("submit", async (event) => {
   if (!roomId || !playerName) return setStatus("#joinStatus", "Code session et pseudo obligatoires.", "error");
   const existing = await getRoom(roomId);
   if (!existing) return setStatus("#joinStatus", "Salle introuvable.", "error");
-  await patchRoom(roomId, { [`participants/${playerId}`]: { name: playerName, joinedAt: Date.now(), lastSeenAt: Date.now() } });
+  const participantLimit = Number(existing?.limits?.participantsPerEvent ?? existing?.meta?.participantsLimit ?? 30);
+  const alreadyJoined = Boolean(existing?.participants?.[playerId]);
+  const participantsCount = Object.keys(existing?.participants || {}).length;
+  if (!alreadyJoined && participantLimit > 0 && participantsCount >= participantLimit) {
+    return setStatus("#joinStatus", `Limite gratuite atteinte : ${participantLimit} participant(s) maximum pour ce quiz.`, "error");
+  }
+  await patchRoom(roomId, { [`participants/${playerId}`]: { name: playerName, joinedAt: existing?.participants?.[playerId]?.joinedAt || Date.now(), lastSeenAt: Date.now() } });
   rememberPlayer(roomId, playerId, playerName);
   history.replaceState(null, "", `player.html?room=${roomId}`);
   $("#joinCard").classList.add("hidden"); $("#playerApp").classList.remove("hidden");
