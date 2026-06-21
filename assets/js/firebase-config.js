@@ -6,42 +6,28 @@ import {
   update,
   onValue,
   get,
-  remove,
-  push,
-  serverTimestamp
+  remove
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
 
-// Remplace ces valeurs par la configuration Web Firebase du projet Modulys / QuizMaster.
-// Tant que la configuration contient les valeurs VOTRE_..., le module bascule en mode démo local.
 const firebaseConfig = {
-  apiKey: "VOTRE_API_KEY",
-  authDomain: "VOTRE_PROJET.firebaseapp.com",
-  databaseURL: "https://VOTRE_PROJET-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "VOTRE_PROJET",
-  storageBucket: "VOTRE_PROJET.firebasestorage.app",
-  messagingSenderId: "VOTRE_SENDER_ID",
-  appId: "VOTRE_APP_ID"
+  apiKey: "AIzaSyBRXQ1tLE-zyYWgEwF_HM21EM-ToAIZ1QM",
+  authDomain: "impro-ead69.firebaseapp.com",
+  databaseURL: "https://impro-ead69-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "impro-ead69",
+  storageBucket: "impro-ead69.firebasestorage.app",
+  messagingSenderId: "574031727979",
+  appId: "1:574031727979:web:1bff48266668f3a930902e"
 };
 
-export const FIREBASE_READY = !Object.values(firebaseConfig).some((value) => String(value || "").includes("VOTRE_"));
-
-let app = null;
-let db = null;
-
-if (FIREBASE_READY) {
-  app = initializeApp(firebaseConfig);
-  db = getDatabase(app);
-}
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
 export {
-  app,
   db,
   ref,
   set,
   update,
   onValue,
   get,
-  remove,
-  push,
-  serverTimestamp
+  remove
 };
