@@ -1,4 +1,8 @@
 import { $, roomFromUrl, verifyRoomPassword, rememberPassword, getRememberedPassword, watchRoom, patchRoom, publicUrl, safeQuestions, currentQuestion, currentRoundAnswers, remainingSeconds, computeScores, isCorrectAnswer, escapeHtml, setStatus } from "./quiz-core.js";
+import { enforceModuleAccess } from "./modulys-access.js";
+const __modulysAccessOk = await enforceModuleAccess("quizmaster", { mode: "hard" });
+if (!__modulysAccessOk) throw new Error("Modulys access denied");
+
 
 const roomId = roomFromUrl();
 let room = null;

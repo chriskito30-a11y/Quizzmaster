@@ -1,10 +1,13 @@
 import { enforceModuleAccess } from "./modulys-access.js";
 import { $, DEFAULT_QUESTIONS, ensureRoom, getRoom, patchRoom, publicUrl, qrCodeUrl, randomRoomId, sanitizeQuestion, safeQuestions, setStatus, rememberPassword, cleanText, clampNumber } from "./quiz-core.js";
+const __modulysAccessOk = await enforceModuleAccess("quizmaster", { mode: "hard" });
+if (!__modulysAccessOk) throw new Error("Modulys access denied");
+
 
 let roomId = new URLSearchParams(location.search).get("room") || "";
 let questions = structuredClone(DEFAULT_QUESTIONS);
 let password = "";
-const moduleAccessReady = enforceModuleAccess("quizmaster", { mode: "soft" });
+const moduleAccessReady = Promise.resolve(true);
 
 const roomInput = $("#roomId");
 roomInput.value = roomId || randomRoomId();
