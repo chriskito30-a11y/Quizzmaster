@@ -1,4 +1,4 @@
-import { $, roomFromUrl, getRoom, watchRoom, patchRoom, getDeviceId, rememberPlayer, getRememberedPlayer, currentQuestion, hasAnswered, remainingSeconds, computeScores, escapeHtml, setStatus } from "./quiz-core.js";
+import { $, roomFromUrl, getRoom, watchRoom, patchRoom, getDeviceId, rememberPlayer, getRememberedPlayer, currentQuestion, hasAnswered, remainingSeconds, computeScores, escapeHtml, setStatus, friendlyErrorMessage } from "./quiz-core.js";
 let roomId = roomFromUrl();
 let playerId = getDeviceId();
 let playerName = "";
@@ -15,21 +15,25 @@ $("#joinForm").addEventListener("submit", async (event) => {
   roomId = $("#roomId").value.trim().toLowerCase();
   playerName = $("#playerName").value.trim().slice(0, 32);
   if (!roomId || !playerName) return setStatus("#joinStatus", "Code session et pseudo obligatoires.", "error");
-  const existing = await getRoom(roomId);
-  if (!existing) return setStatus("#joinStatus", "Salle introuvable.", "error");
-  const participantLimit = Number(existing?.limits?.participantsPerEvent ?? existing?.meta?.participantsLimit ?? 30);
-  const alreadyJoined = Boolean(existing?.participants?.[playerId]);
-  const participantsCount = Object.keys(existing?.participants || {}).length;
-  if (!alreadyJoined && participantLimit > 0 && participantsCount >= participantLimit) {
-    return setStatus("#joinStatus", `Limite gratuite atteinte : ${participantLimit} participant(s) maximum pour ce quiz.`, "error");
+  try {
+    const existing = await getRoom(roomId);
+    if (!existing) return setStatus("#joinStatus", "Session introuvable.", "error");
+    const participantLimit = Number(existing?.limits?.participantsPerEvent ?? existing?.meta?.participantsLimit ?? 30);
+    const alreadyJoined = Boolean(existing?.participants?.[playerId]);
+    const participantsCount = Object.keys(existing?.participants || {}).length;
+    if (!alreadyJoined && participantLimit > 0 && participantsCount >= participantLimit) {
+      return setStatus("#joinStatus", `Limite incluse atteinte : ${participantLimit} participant(s) maximum pour ce quiz.`, "error");
+    }
+    await patchRoom(roomId, { [`participants/${playerId}`]: { name: playerName, joinedAt: existing?.participants?.[playerId]?.joinedAt || Date.now(), lastSeenAt: Date.now() } });
+    rememberPlayer(roomId, playerId, playerName);
+    history.replaceState(null, "", `player.html?room=${roomId}`);
+    $("#joinCard").classList.add("hidden"); $("#playerApp").classList.remove("hidden");
+    if (stopWatch) stopWatch();
+    stopWatch = watchRoom(roomId, (data) => { room = data; render(); });
+    clearInterval(tick); tick = setInterval(renderTimer, 400);
+  } catch (error) {
+    setStatus("#joinStatus", friendlyErrorMessage(error, "Impossible de rejoindre cette animation."), "error");
   }
-  await patchRoom(roomId, { [`participants/${playerId}`]: { name: playerName, joinedAt: existing?.participants?.[playerId]?.joinedAt || Date.now(), lastSeenAt: Date.now() } });
-  rememberPlayer(roomId, playerId, playerName);
-  history.replaceState(null, "", `player.html?room=${roomId}`);
-  $("#joinCard").classList.add("hidden"); $("#playerApp").classList.remove("hidden");
-  if (stopWatch) stopWatch();
-  stopWatch = watchRoom(roomId, (data) => { room = data; render(); });
-  clearInterval(tick); tick = setInterval(renderTimer, 400);
 });
 
 function renderTimer() { if (!room) return; $("#timer").textContent = room.state?.status === "question" ? `${remainingSeconds(room)}s` : "—"; }
@@ -65,7 +69,11 @@ async function submitAnswer(payload) {
   const q = currentQuestion(room);
   if (!q || room.state?.status !== "question" || hasAnswered(room, playerId)) return;
   const answerId = `${room.state.roundId}_${playerId}`.replace(/[^a-zA-Z0-9_-]/g, "_");
-  await patchRoom(roomId, { [`answers/${answerId}`]: { ...payload, answerId, playerId, playerName, questionId: q.id, roundId: room.state.roundId, at: Date.now() } });
+  try {
+    await patchRoom(roomId, { [`answers/${answerId}`]: { ...payload, answerId, playerId, playerName, questionId: q.id, roundId: room.state.roundId, at: Date.now() } });
+  } catch (error) {
+    setStatus("#answerStatus", friendlyErrorMessage(error, "Impossible d’envoyer la réponse."), "error");
+  }
 }
 
 if (roomId && remembered?.name) { $("#playerName").value = remembered.name; setTimeout(() => $("#joinForm").requestSubmit(), 100); }

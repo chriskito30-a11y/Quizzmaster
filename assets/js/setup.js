@@ -1,7 +1,7 @@
 import { enforceModuleAccess, assertCanCreateModuleEvent, buildModuleEntityMeta, recordModuleEventUsage, isFreeLimitError, renderFreeLimitUpgrade } from "./modulys-access.js";
-import { $, DEFAULT_QUESTIONS, ensureRoom, getRoom, patchRoom, publicUrl, qrCodeUrl, randomRoomId, sanitizeQuestion, safeQuestions, setStatus, rememberPassword, cleanText, clampNumber } from "./quiz-core.js";
+import { $, DEFAULT_QUESTIONS, ensureRoom, getRoom, patchRoom, publicUrl, qrCodeUrl, randomRoomId, sanitizeQuestion, safeQuestions, setStatus, rememberPassword, cleanText, clampNumber, friendlyErrorMessage } from "./quiz-core.js";
 const __modulysAccessOk = await enforceModuleAccess("quizmaster", { mode: "hard" });
-if (!__modulysAccessOk) throw new Error("Modulys access denied");
+if (!__modulysAccessOk) throw new Error("Accès non autorisé");
 
 
 let roomId = new URLSearchParams(location.search).get("room") || "";
@@ -91,15 +91,26 @@ $("#roomForm").addEventListener("submit", async (event) => {
     setStatus("#roomStatus", result.created ? "Salle créée." : "Salle existante ouverte.", "success");
   } catch (err) {
     if (isFreeLimitError(err) && renderFreeLimitUpgrade("#roomStatus", "quizmaster", err)) return;
-    setStatus("#roomStatus", err.message || "Erreur de création.", "error");
+    setStatus("#roomStatus", friendlyErrorMessage(err, "Impossible de créer ou d’ouvrir cette animation."), "error");
   }
 });
 
 $("#addQuestionBtn").addEventListener("click", () => { questions = readQuestionsFromDom(); questions.push({ id: crypto.randomUUID?.() || String(Date.now()), type: "qcm", text: "Nouvelle question", durationSec: 25, choices: ["Réponse A", "Réponse B", "Réponse C", "Réponse D"], correct: 0, points: 100 }); renderQuestions(); });
-$("#loadDemoBtn").addEventListener("click", () => { questions = structuredClone(DEFAULT_QUESTIONS); renderQuestions(); setStatus("#questionsStatus", "Questions démo chargées. Pense à enregistrer."); });
+$("#loadDemoBtn").addEventListener("click", () => { questions = structuredClone(DEFAULT_QUESTIONS); renderQuestions(); setStatus("#questionsStatus", "Questions d’exemple chargées. Pensez à enregistrer."); });
 $("#questionsList").addEventListener("click", (event) => { if (event.target.dataset.action === "delete") { questions = readQuestionsFromDom(); questions.splice(Number(event.target.closest(".question-card").dataset.index), 1); renderQuestions(); } });
 $("#questionsList").addEventListener("change", (event) => { if (event.target.dataset.field === "type") { questions = readQuestionsFromDom(); renderQuestions(); } if (event.target.dataset.correct) { const card = event.target.closest(".question-card"); card.querySelectorAll("[data-correct]").forEach((sel) => { if (sel !== event.target) sel.value = "no"; }); } });
-$("#saveQuestionsBtn").addEventListener("click", async () => { if (!roomInput.value) return setStatus("#questionsStatus", "Crée d’abord une salle.", "error"); questions = readQuestionsFromDom(); if (!questions.length) return setStatus("#questionsStatus", "Ajoute au moins une question.", "error"); await patchRoom(roomInput.value, { questions, "meta/updatedAt": Date.now() }); updateLinks(); setStatus("#questionsStatus", "Questions enregistrées.", "success"); });
+$("#saveQuestionsBtn").addEventListener("click", async () => {
+  try {
+    if (!roomInput.value) return setStatus("#questionsStatus", "Créez d’abord une animation.", "error");
+    questions = readQuestionsFromDom();
+    if (!questions.length) return setStatus("#questionsStatus", "Ajoutez au moins une question.", "error");
+    await patchRoom(roomInput.value, { questions, "meta/updatedAt": Date.now() });
+    updateLinks();
+    setStatus("#questionsStatus", "Questions enregistrées.", "success");
+  } catch (error) {
+    setStatus("#questionsStatus", friendlyErrorMessage(error, "Impossible d’enregistrer les questions."), "error");
+  }
+});
 
 async function boot() { if (roomId) { const room = await getRoom(roomId); if (room) { roomInput.value = roomId; $("#quizTitle").value = room.meta?.title || "Quiz interactif"; $("#defaultDuration").value = room.settings?.defaultDurationSec || 25; questions = safeQuestions(room); } } renderQuestions(); updateLinks(); }
 boot();

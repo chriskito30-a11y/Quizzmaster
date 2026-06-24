@@ -360,6 +360,19 @@ export function escapeHtml(value = "") {
   return String(value).replace(/[&<>"]/g, (m) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[m]));
 }
 
+export function friendlyErrorMessage(error, fallback = "Une erreur est survenue, veuillez réessayer.") {
+  const raw = String(error?.code || error?.message || error || "").toLowerCase();
+  if (!raw) return fallback;
+  if (raw.includes("permission") || raw.includes("unauthorized") || raw.includes("denied")) return "Accès non autorisé.";
+  if (raw.includes("not-found") || raw.includes("introuvable")) return "Session introuvable.";
+  if (raw.includes("limit") || raw.includes("limite") || raw.includes("quota")) return "Limite incluse atteinte.";
+  if (raw.includes("network") || raw.includes("unavailable") || raw.includes("timeout")) return "Connexion impossible. Vérifiez votre réseau puis réessayez.";
+  if (raw.includes("bad request") || raw.includes("internal") || raw.includes("undefined") || raw.includes("null") || raw.includes("firebase")) return fallback;
+  const message = String(error?.message || "").trim();
+  if (message && message.length <= 120) return message;
+  return fallback;
+}
+
 export function setStatus(selector, text, type = "") {
   const el = $(selector);
   if (!el) return;

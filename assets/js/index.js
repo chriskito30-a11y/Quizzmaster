@@ -2,6 +2,6 @@ import { enforceModuleAccess } from "./modulys-access.js";
 import { isFirebaseReady, setStatus } from "./quiz-core.js";
 
 const __modulysAccessOk = await enforceModuleAccess("quizmaster", { mode: "hard" });
-if (!__modulysAccessOk) throw new Error("Modulys access denied");
+if (!__modulysAccessOk) throw new Error("Accès non autorisé");
 
-setStatus("#firebaseStatus", isFirebaseReady() ? "Firebase est configuré : les sessions utiliseront Realtime Database." : "Mode démo local actif : ajoute ta configuration Firebase dans assets/js/firebase-config.js pour le live multi-appareils.", isFirebaseReady() ? "success" : "");
+setStatus("#firebaseStatus", isFirebaseReady() ? "Connexion prête : les sessions live sont actives sur plusieurs appareils." : "Mode local actif : le test reste possible sur cet appareil, mais le live multi-appareils peut être limité.", isFirebaseReady() ? "success" : "");
