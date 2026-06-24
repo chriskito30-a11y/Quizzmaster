@@ -8,6 +8,15 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;650;700;800;900&display=swap" rel="stylesheet"><link rel="stylesheet" href="assets/css/quiz.css">
 </head>
 <body class="app-bg">
+  <header class="module-suite-header">
+    <nav class="module-suite-nav" aria-label="Navigation Modulys QuizMaster">
+      <a class="module-suite-brand" href="index.html"><span class="module-suite-mark">❓</span><span>QuizMaster</span></a>
+      <div class="module-suite-actions">
+        <a class="module-suite-btn" href="https://www.modulys.top/mes-modules.html">Mes modules</a>
+        <button id="modulysTopbarLogoutBtn" class="module-suite-btn module-suite-logout" type="button" hidden>Déconnexion</button>
+      </div>
+    </nav>
+  </header>
   <main class="page-shell">
     <header class="topbar">
       <div><p class="eyebrow">QuizMaster</p><h1>Créer / configurer</h1><p class="lead">Créez une salle, ajoutez vos questions, puis ouvrez l’interface admin et l’écran public.</p></div>
@@ -45,5 +54,6 @@
     </section>
   </main>
   <script type="module" src="assets/js/setup.js"></script><script src="assets/js/pwa.js"></script>
+  <script type="module" src="assets/js/module-nav.js"></script>
 </body>
 </html>
