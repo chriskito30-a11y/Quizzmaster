@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>QuizMaster — Quiz interactif live Modulys</title>
-  <meta name="description" content="QuizMaster est un module Modulys pour créer des quiz interactifs avec participants mobiles, QR code, écran public, timer et classement.">
-  <meta name="theme-color" content="#111827">
+  <title>QuizMaster — Modulys</title>
+  <meta name="description" content="Les participants répondent depuis leur téléphone, l’organisateur pilote les questions et l’écran public affiche le timer, les réponses et le classement.">
+  <meta name="theme-color" content="#7c3aed">
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="assets/img/icon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -19,30 +19,35 @@
       <a class="module-suite-brand" href="index.html"><span class="module-suite-mark">❓</span><span>QuizMaster</span></a>
       <div class="module-suite-actions">
         <a class="module-suite-btn" href="https://www.modulys.top/mes-modules.html">Mes modules</a>
+        <a class="module-suite-btn" href="https://www.modulys.top/">Modulys.top</a>
         <button id="modulysTopbarLogoutBtn" class="module-suite-btn module-suite-logout" type="button" hidden>Déconnexion</button>
       </div>
     </nav>
   </header>
   <main class="page-shell index-shell">
-    <section class="hero-card glow-card">
-      <p class="eyebrow">Module Modulys · Quiz interactif</p>
-      <h1>QuizMaster</h1>
-      <p class="lead">Créez un quiz live en quelques minutes : les participants répondent depuis leur téléphone, l’organisateur pilote la session et l’écran public affiche le timer, les réponses et le classement.</p>
-      <div class="actions-row">
+    <section class="hero-card glow-card suite-hero">
+      <p class="eyebrow">Module Modulys · Quiz interactif live</p>
+      <h1>Créez un quiz interactif en quelques minutes.</h1>
+      <p class="lead">Les participants répondent depuis leur téléphone, l’organisateur pilote les questions et l’écran public affiche le timer, les réponses et le classement.</p>
+      <div class="actions-row suite-cta-row">
         <a class="primary-link big-btn" href="setup.html">Créer un quiz</a>
-        <a class="ghost-link big-btn" href="player.html">Rejoindre une session</a>
-        <a class="ghost-link big-btn" href="screen.html">Écran public</a>
+        <a class="ghost-link big-btn" href="player.html">Rejoindre avec un code</a>
+        <a class="ghost-link big-btn" href="screen.html">Afficher sur grand écran</a>
+        <a class="ghost-link big-btn" href="demo.html">Voir une démo</a>
       </div>
       <p class="status-text" id="firebaseStatus"></p>
     </section>
 
-    <section class="feature-grid" aria-label="Fonctionnalités principales">
-      <article class="mini-card"><strong>QR code</strong><span>Un lien participant et un lien écran public sont générés automatiquement.</span></article>
-      <article class="mini-card"><strong>Pilotage live</strong><span>L’organisateur lance les questions, révèle les réponses et suit les participants.</span></article>
-      <article class="mini-card"><strong>Classement</strong><span>Les scores sont calculés automatiquement à partir des bonnes réponses.</span></article>
+    <section class="feature-grid suite-steps" aria-label="Comment ça marche">
+      <article class="mini-card"><strong>Étape 1</strong><span>Créez vos questions et choisissez la durée.</span></article><article class="mini-card"><strong>Étape 2</strong><span>Partagez le QR code aux participants.</span></article><article class="mini-card"><strong>Étape 3</strong><span>Lancez le quiz et suivez les scores en direct.</span></article>
     </section>
 
-    <footer>© 2026 — Modulys · Module QuizMaster</footer>
+    <section class="suite-section suite-grid-2" aria-label="Cas d’usage et offre">
+      <article class="mini-card suite-card"><strong>Cas d’usage</strong><span>Animation d’entreprise · Quiz de soirée · Événement scolaire · Challenge associatif</span></article>
+      <article class="mini-card suite-card"><strong>Offre actuelle</strong><span>Offre Découverte : 1 animation par mois, jusqu’à 30 participants.</span></article>
+    </section>
+
+    <footer>© 2026 — Modulys · QuizMaster · <a href="https://www.modulys.top/">Retour Modulys.top</a></footer>
   </main>
   <script type="module" src="assets/js/index.js"></script>
   <script src="assets/js/pwa.js"></script>
